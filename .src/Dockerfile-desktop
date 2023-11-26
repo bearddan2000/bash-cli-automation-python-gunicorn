@@ -1,0 +1,24 @@
+FROM alpine:latest
+
+ENV DISPLAY :0
+
+ENV USERNAME developer
+
+WORKDIR /workspace
+
+RUN apk update \
+    && apk add python3 py-pip
+
+WORKDIR /workspace/app
+
+RUN adduser -S $USERNAME
+
+ENV HOME /home/$USERNAME
+
+USER $USERNAME
+
+COPY bin .
+
+RUN pip install -r requirements.txt
+
+CMD [ "gunicorn", "-b", "0.0.0.0:5000", "main:app" ]
